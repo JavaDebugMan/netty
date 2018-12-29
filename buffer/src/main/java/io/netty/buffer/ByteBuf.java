@@ -30,8 +30,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 /**
+ * 所有的网络通信都涉及到字节序列的移动
  * A random and sequential accessible sequence of zero or more bytes (octets).
- * This interface provides an abstract view for one or more primitive byte
+ * This interface provides an abstract view for one or more primitive(原始的) byte
  * arrays ({@code byte[]}) and {@linkplain ByteBuffer NIO buffers}.
  *
  * <h3>Creation of a buffer</h3>
@@ -43,7 +44,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * <h3>Random Access Indexing</h3>
  * <p>
  * Just like an ordinary primitive byte array, {@link ByteBuf} uses
- * <a href="http://en.wikipedia.org/wiki/Zero-based_numbering">zero-based indexing</a>.
+ * <a href="http://en.wikipedia.org/wiki/Zero-based_numbering">zero-based(从0开始) indexing</a>.
  * It means the index of the first byte is always {@code 0} and the index of the last byte is
  * always {@link #capacity() capacity - 1}.  For example, to iterate all bytes of a buffer, you
  * can do the following, regardless of its internal implementation:
@@ -61,7 +62,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * {@link ByteBuf} provides two pointer variables to support sequential
  * read and write operations - {@link #readerIndex() readerIndex} for a read
  * operation and {@link #writerIndex() writerIndex} for a write operation
- * respectively.  The following diagram shows how a buffer is segmented into
+ * respectively.  The following diagram(图表) shows how a buffer is segmented into
  * three areas by the two pointers:
  *
  * <pre>
@@ -73,17 +74,23 @@ import java.nio.charset.UnsupportedCharsetException;
  *      0      <=      readerIndex   <=   writerIndex    <=    capacity
  * </pre>
  *
- * <h4>Readable bytes (the actual content)</h4>
+ * <h4>Readable bytes (the actual content 实际存储内容的区域)</h4>
  * <p>
  * This segment is where the actual data is stored.  Any operation whose name
  * starts with {@code read} or {@code skip} will get or skip the data at the
  * current {@link #readerIndex() readerIndex} and increase it by the number of
- * read bytes.  If the argument of the read operation is also a
+ * read bytes.
+ * <p>
+ * If the argument of the read operation is also a
  * {@link ByteBuf} and no destination index is specified, the specified
  * buffer's {@link #writerIndex() writerIndex} is increased together.
  * <p>
+ * <p>
+ * <p>
  * If there's not enough content left, {@link IndexOutOfBoundsException} is
- * raised.  The default value of newly allocated, wrapped or copied buffer's
+ * raised.
+ * <p>
+ * The default value of newly allocated, wrapped or copied buffer's
  * {@link #readerIndex() readerIndex} is {@code 0}.
  *
  * <pre>
@@ -99,14 +106,18 @@ import java.nio.charset.UnsupportedCharsetException;
  * This segment is a undefined space which needs to be filled.  Any operation
  * whose name starts with {@code write} will write the data at the current
  * {@link #writerIndex() writerIndex} and increase it by the number of written
- * bytes.  If the argument of the write operation is also a {@link ByteBuf},
+ * bytes.
+ * <p>
+ * If the argument of the write operation is also a {@link ByteBuf},
  * and no source index is specified, the specified buffer's
  * {@link #readerIndex() readerIndex} is increased together.
+ *
  * <p>
  * If there's not enough writable bytes left, {@link IndexOutOfBoundsException}
  * is raised.  The default value of newly allocated buffer's
- * {@link #writerIndex() writerIndex} is {@code 0}.  The default value of
- * wrapped or copied buffer's {@link #writerIndex() writerIndex} is the
+ * {@link #writerIndex() writerIndex} is {@code 0}.
+ * <p>
+ * The default value of wrapped or copied buffer's {@link #writerIndex() writerIndex} is the
  * {@link #capacity() capacity} of the buffer.
  *
  * <pre>
@@ -123,7 +134,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * Initially, the size of this segment is {@code 0}, but its size increases up
  * to the {@link #writerIndex() writerIndex} as read operations are executed.
  * The read bytes can be discarded by calling {@link #discardReadBytes()} to
- * reclaim unused area as depicted by the following diagram:
+ * reclaim(回收再利用) unused area as depicted(描述) by the following diagram:
  *
  * <pre>
  *  BEFORE discardReadBytes()
@@ -154,7 +165,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * You can set both {@link #readerIndex() readerIndex} and
  * {@link #writerIndex() writerIndex} to {@code 0} by calling {@link #clear()}.
  * It does not clear the buffer content (e.g. filling with {@code 0}) but just
- * clears the two pointers.  Please also note that the semantic of this
+ * clears the two pointers.  Please also note that the semantic(语义) of this
  * operation is different from {@link ByteBuffer#clear()}.
  *
  * <pre>
@@ -178,7 +189,7 @@ import java.nio.charset.UnsupportedCharsetException;
  *
  * <h3>Search operations</h3>
  * <p>
- * For simple single-byte searches, use {@link #indexOf(int, int, byte)} and {@link #bytesBefore(int, int, byte)}.
+ * For simple single-byte(单字节) searches, use {@link #indexOf(int, int, byte)} and {@link #bytesBefore(int, int, byte)}.
  * {@link #bytesBefore(byte)} is especially useful when you deal with a {@code NUL}-terminated string.
  * For complicated searches, use {@link #forEachByte(int, int, ByteProcessor)} with a {@link ByteProcessor}
  * implementation.
@@ -238,7 +249,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * <p>
  * Various {@link #toString(Charset)} methods convert a {@link ByteBuf}
  * into a {@link String}.  Please note that {@link #toString()} is not a
- * conversion method.
+ * conversion(转换,转化) method.
  *
  * <h4>I/O Streams</h4>
  * <p>
@@ -254,16 +265,20 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract int capacity();
 
     /**
-     * Adjusts the capacity of this buffer.  If the {@code newCapacity} is less than the current
-     * capacity, the content of this buffer is truncated.  If the {@code newCapacity} is greater
-     * than the current capacity, the buffer is appended with unspecified data whose length is
+     * Adjusts the capacity of this buffer.
+     * <p>
+     * If the {@code newCapacity} is less than the current
+     * capacity, the content of this buffer is truncated.
+     * <p>
+     * If the {@code newCapacity} is greater than the current capacity, the buffer is appended with unspecified data whose length is
      * {@code (newCapacity - currentCapacity)}.
      */
     public abstract ByteBuf capacity(int newCapacity);
 
     /**
-     * Returns the maximum allowed capacity of this buffer.  If a user attempts to increase the
-     * capacity of this buffer beyond the maximum capacity using {@link #capacity(int)} or
+     * Returns the maximum allowed capacity of this buffer.
+     * <p>
+     * If a user attempts to increase the capacity of this buffer beyond the maximum capacity using {@link #capacity(int)} or
      * {@link #ensureWritable(int)}, those methods will raise an
      * {@link IllegalArgumentException}.
      */
@@ -317,16 +332,19 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract boolean isReadOnly();
 
     /**
+     * 返回该ByteBuf只读的ByteBuf
      * Returns a read-only version of this buffer.
      */
     public abstract ByteBuf asReadOnly();
 
     /**
+     * 返回该ByteBuf的读索引
      * Returns the {@code readerIndex} of this buffer.
      */
     public abstract int readerIndex();
 
     /**
+     * 设置ByteBuf的读索引
      * Sets the {@code readerIndex} of this buffer.
      *
      * @throws IndexOutOfBoundsException if the specified {@code readerIndex} is
@@ -382,7 +400,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * buf.readerIndex(2);
      * </pre>
      * <p>
-     * By contrast, this method guarantees that it never
+     * By contrast(相比之下), this method guarantees that it never
      * throws an {@link IndexOutOfBoundsException} as long as the specified
      * indexes meet basic constraints, regardless what the current index
      * values of the buffer are:
@@ -402,12 +420,14 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract ByteBuf setIndex(int readerIndex, int writerIndex);
 
     /**
+     * 返回该ByteBuf可读的字节
      * Returns the number of readable bytes which is equal to
      * {@code (this.writerIndex - this.readerIndex)}.
      */
     public abstract int readableBytes();
 
     /**
+     * 返回该ByteBuf可写的字节
      * Returns the number of writable bytes which is equal to
      * {@code (this.capacity - this.writerIndex)}.
      */
@@ -456,6 +476,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract ByteBuf clear();
 
     /**
+     * 标记当前的读索引,并可以通过resetReaderIndex()方法进行复位
      * Marks the current {@code readerIndex} in this buffer.  You can
      * reposition the current {@code readerIndex} to the marked
      * {@code readerIndex} by calling {@link #resetReaderIndex()}.
@@ -1441,11 +1462,16 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     }
 
     /**
+     * 将当前ByteBuf中的数据读取到新的ByteBuf中,读取的长度是length,操作成功完成之后
+     * 返回的ByteBuf中的readIndex为0,writeIndex为length
+     * <p>
+     * 如果读取的的length大于当前操作的ByteBuf的可写字节,将抛出IndexOutOfBoundsException
+     * 操作失败.
      * Transfers this buffer's data to a newly created buffer starting at
      * the current {@code readerIndex} and increases the {@code readerIndex}
      * by the number of the transferred bytes (= {@code length}).
      * The returned buffer's {@code readerIndex} and {@code writerIndex} are
-     * {@code 0} and {@code length} respectively.
+     * {@code 0y} and {@code length} respectively.
      *
      * @param length the number of bytes to transfer
      * @return the newly created buffer which contains the transferred bytes
@@ -2160,6 +2186,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract ByteBuffer[] nioBuffers(int index, int length);
 
     /**
+     * 检查ByteBuf是否有支撑数组
      * Returns {@code true} if and only if this buffer has a backing byte array.
      * If this method returns true, you can safely call {@link #array()} and
      * {@link #arrayOffset()}.
@@ -2174,6 +2201,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract byte[] array();
 
     /**
+     * 返回数组第一个字节的偏移量
      * Returns the offset of the first byte within the backing byte array of
      * this buffer.
      *
