@@ -1272,6 +1272,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      */
     public abstract int setCharSequence(int index, CharSequence sequence, Charset charset);
 
+
+/**-------------------------------------顺序读操作--Begin---------------------------------------------------------------------------------*/
     /**
      * Gets a boolean at the current {@code readerIndex} and increases
      * the {@code readerIndex} by {@code 1} in this buffer.
@@ -1512,7 +1514,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * Transfers this buffer's data to the specified destination starting at
      * the current {@code readerIndex} until the destination becomes
      * non-writable, and increases the {@code readerIndex} by the number of the
-     * transferred bytes.  This method is basically same with
+     * transferred bytes.
+     * This method is basically same with
      * {@link #readBytes(ByteBuf, int, int)}, except that this method
      * increases the {@code writerIndex} of the destination by the number of
      * the transferred bytes while {@link #readBytes(ByteBuf, int, int)}
@@ -1538,6 +1541,9 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     public abstract ByteBuf readBytes(ByteBuf dst, int length);
 
     /**
+     * * 将当前的ByteBuf的数据读取到目标ByteBuf中,读取的字节数长度为length
+     * * 目标ByteBuf的起始索引为dstIndex,非writeIndex(正常ByteBuf写数据是从writeIndex开始写)
+     * * 操作完成之后,当前ByteBuf的readerIndex+=length
      * Transfers this buffer's data to the specified destination starting at
      * the current {@code readerIndex} and increases the {@code readerIndex}
      * by the number of the transferred bytes (= {@code length}).
@@ -1629,6 +1635,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      */
     public abstract int readBytes(FileChannel out, long position, int length) throws IOException;
 
+
+/**-------------------------------------顺序读操作- End----------------------------------------------------------------------------------*/
     /**
      * Increases the current {@code readerIndex} by the specified
      * {@code length} in this buffer.
